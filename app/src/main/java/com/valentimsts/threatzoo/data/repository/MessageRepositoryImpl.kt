@@ -7,7 +7,6 @@ import android.provider.Telephony
 
 import com.valentimsts.threatzoo.domain.model.messages.*
 import com.valentimsts.threatzoo.domain.repository.MessageRepository
-import androidx.core.net.toUri
 
 class MessageRepositoryImpl(
     private val contentResolver: ContentResolver
@@ -16,14 +15,14 @@ class MessageRepositoryImpl(
     override suspend fun fetchSmsMessages(): List<Message> {
         val messages = mutableListOf<Message>()
 
-        val smsUri: Uri = Telephony.Sms.CONTENT_URI
         val cursor: Cursor? = contentResolver.query(
-            smsUri,
+            Telephony.Sms.CONTENT_URI,
             arrayOf(
                 Telephony.Sms._ID,
                 Telephony.Sms.DATE,
                 Telephony.Sms.ADDRESS,
-                Telephony.Sms.BODY
+                Telephony.Sms.BODY,
+                Telephony.Sms.TYPE,
             ),
             null,
             null,
@@ -35,19 +34,46 @@ class MessageRepositoryImpl(
             val dateIndex = it.getColumnIndexOrThrow(Telephony.Sms.DATE)
             val addressIndex = it.getColumnIndexOrThrow(Telephony.Sms.ADDRESS)
             val bodyIndex = it.getColumnIndexOrThrow(Telephony.Sms.BODY)
+            val typeIndex = it.getColumnIndexOrThrow(Telephony.Sms.TYPE)
 
             while (it.moveToNext()) {
                 val id = it.getLong(idIndex)
                 val timestamp = it.getLong(dateIndex)
                 val address = it.getString(addressIndex) ?: ""
+
+                var fromAddress: String
+                var toAddress: String
+                var messageType: MessageType
+
+                val type = it.getInt(typeIndex)
+                when(type) {
+                    Telephony.Sms.MESSAGE_TYPE_SENT -> {
+                        fromAddress = "Device"
+                        toAddress = address
+                        messageType = MessageType.SENT
+
+                    }
+                    Telephony.Sms.MESSAGE_TYPE_INBOX -> {
+                        fromAddress = address
+                        toAddress = "Device"
+                        messageType = MessageType.RECEIVED
+                    }
+                    else -> {
+                        fromAddress = "Device"
+                        toAddress = address
+                        messageType = MessageType.UNKNOWN
+                    }
+                }
+
                 val body = it.getString(bodyIndex) ?: ""
 
                 val sms = SmsMessage(
                     id = id,
                     timestamp = timestamp,
-                    fromAddress = address,
-                    toAddress = "Device",
-                    body = body
+                    fromAddress = fromAddress,
+                    toAddress = toAddress,
+                    body = body,
+                    type = messageType
                 )
                 messages.add(sms)
             }

@@ -5,6 +5,7 @@ data class MmsMessage(
     override val timestamp: Long,
     override val fromAddress: String,
     override val toAddress: String,
+    override val type: MessageType,
 
     val subject: String?,
     val parts: List<MmsPart>

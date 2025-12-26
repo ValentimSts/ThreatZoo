@@ -5,4 +5,5 @@ sealed class Message {
     abstract val timestamp: Long
     abstract val fromAddress: String
     abstract val toAddress: String
+    abstract val type: MessageType
 }
