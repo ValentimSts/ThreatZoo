@@ -5,21 +5,15 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 
-import com.valentimsts.threatzoo.presentation.core.permissions.RationaleTextProvider
-
 @Composable
 fun RationaleDialog(
-    isPermanentlyDeclined: Boolean,
-    rationaleTextProvider: RationaleTextProvider,
     onConfirm: () -> Unit,
     onDismiss: () -> Unit
 ) {
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text(text = rationaleTextProvider.getTitle()) },
-        text = { Text(text = rationaleTextProvider.getDescription(
-            isPermanentlyDeclined = isPermanentlyDeclined
-        )) },
+        title = { Text(text = "Title") },
+        text = { Text(text = "Text") },
         confirmButton = {
             TextButton(onClick = onConfirm) {
                 Text("OK")

@@ -15,7 +15,9 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            ThreatZooTheme {
+            ThreatZooTheme(
+                // dynamicColor = false
+            ) {
                 NavigationController()
             }
         }

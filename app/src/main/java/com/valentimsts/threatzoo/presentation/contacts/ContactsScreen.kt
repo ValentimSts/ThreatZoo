@@ -1,6 +1,8 @@
 package com.valentimsts.threatzoo.presentation.contacts
 
 import android.Manifest
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -15,39 +17,37 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.unit.dp
 
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
-import com.valentimsts.threatzoo.presentation.core.ScreenContainer
-import com.valentimsts.threatzoo.presentation.core.SearchBar
-import com.valentimsts.threatzoo.presentation.core.permissions.rememberSinglePermissionHandler
+import com.valentimsts.threatzoo.presentation.core.components.SearchBar
 import com.valentimsts.threatzoo.presentation.contacts.components.FetchContactsButton
 import com.valentimsts.threatzoo.presentation.contacts.components.FilterButton
 import com.valentimsts.threatzoo.presentation.contacts.components.ContactCard
 import com.valentimsts.threatzoo.presentation.contacts.components.ExfiltrateContactsButton
-import com.valentimsts.threatzoo.presentation.messages.permissions.ReadSmsRationaleTextProvider
+import com.valentimsts.threatzoo.presentation.core.permissions.PermissionScreenWrapper
+import com.valentimsts.threatzoo.presentation.core.permissions.RequiredPermissions.ReadContacts
 
 @Composable
 fun ContactsScreen(
     viewModel: ContactsViewModel = hiltViewModel()
 ) {
     val viewState by viewModel.viewState
+    val focusManager = LocalFocusManager.current
 
-    val permissionHandler = rememberSinglePermissionHandler(
-        permission = Manifest.permission.READ_CONTACTS,
-        rationaleTextProvider = ReadSmsRationaleTextProvider()
-    ) { isGranted ->
-        if (isGranted) {
-            viewModel.fetchContacts()
-        }
-    }
-
-    ScreenContainer(
-        title = "Contacts",
+    PermissionScreenWrapper(
+        modifier = Modifier.clickable(
+            interactionSource = remember { MutableInteractionSource() },
+            indication = null, // Remove the ripple effect on tap
+            onClick = { focusManager.clearFocus() }
+        ),
+        title = "Contacts Screen",
         subtitle = "View your contacts",
-        permissionHandler = permissionHandler,
+        permissions = listOf(ReadContacts),
     ) {
         viewModel.fetchContacts()
 
@@ -71,7 +71,9 @@ fun ContactsScreen(
                     onClick = viewModel::fetchContacts
                 )
                 ExfiltrateContactsButton(
-                    onClick = { /** TODO(): Implement exfiltrate contacts **/  }
+                    onClick = {
+                        /** TODO(): Implement exfiltrate contacts **/
+                    }
                 )
             }
 

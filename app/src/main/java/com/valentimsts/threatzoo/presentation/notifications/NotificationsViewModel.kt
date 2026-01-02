@@ -4,7 +4,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.valentimsts.threatzoo.domain.repository.NotificationRepository
-import com.valentimsts.threatzoo.presentation.core.notifications.NotificationManager
 import com.valentimsts.threatzoo.presentation.core.utils.TimestampOrder
 import com.valentimsts.threatzoo.presentation.notifications.utils.NotificationsFilterState
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -15,7 +14,6 @@ import javax.inject.Inject
 @HiltViewModel
 class NotificationsViewModel @Inject constructor(
     private val repository: NotificationRepository,
-    val notificationManager: NotificationManager
 ) : ViewModel() {
     var viewState = mutableStateOf(NotificationsViewState())
 

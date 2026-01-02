@@ -1,4 +1,4 @@
-package com.valentimsts.threatzoo.presentation.core
+package com.valentimsts.threatzoo.presentation.core.components
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding

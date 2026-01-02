@@ -1,5 +1,7 @@
 package com.valentimsts.threatzoo.presentation.notifications
 
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -14,12 +16,16 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
-import com.valentimsts.threatzoo.presentation.core.NotificationScreenContainer
-import com.valentimsts.threatzoo.presentation.core.SearchBar
+
+import com.valentimsts.threatzoo.presentation.core.components.SearchBar
+import com.valentimsts.threatzoo.presentation.core.permissions.PermissionScreenWrapper
+import com.valentimsts.threatzoo.presentation.core.permissions.RequiredPermissions.AccessNotifications
 import com.valentimsts.threatzoo.presentation.notifications.components.FilterButton
 import com.valentimsts.threatzoo.presentation.notifications.components.NotificationCard
 
@@ -28,14 +34,19 @@ fun NotificationsScreen(
     viewModel: NotificationsViewModel = hiltViewModel()
 ) {
     val viewState by viewModel.viewState
+    val focusManager = LocalFocusManager.current
 
-    NotificationScreenContainer(
-        title = "Notifications",
+    PermissionScreenWrapper(
+        modifier = Modifier.clickable(
+            interactionSource = remember { MutableInteractionSource() },
+            indication = null, // Remove the ripple effect on tap
+            onClick = { focusManager.clearFocus() }
+        ),
+        title = "Notifications Screen",
         subtitle = "View your notifications",
-        notificationManager = viewModel.notificationManager
+        permissions = listOf(AccessNotifications),
     ) {
         Column(modifier = Modifier.fillMaxSize()) {
-
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically
